@@ -1,5 +1,7 @@
 # Rails 3.2.3 + Carrierwave + jQuery File Upload 
 
+This is a fork with [fancybox](http://fancybox.net/) instead of slimbox and Galleries loaded with AJAX.
+
 A small application that demonstrates the work of these programs together.
 
 More information about [jQuery File Upload](http://blueimp.github.com/jQuery-File-Upload/) or on [Github](https://github.com/blueimp/jQuery-File-Upload).
