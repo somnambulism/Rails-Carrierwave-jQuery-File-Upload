@@ -22,7 +22,7 @@ GAL = {
 
 	getGallery : function() {
 		$('a.gallery-name').removeClass('active');
-		$(this).addClass('active')
+		$(this).addClass('active');
 		$.ajax({
 			type : 'GET',
 			url : $(this).attr('href'),
