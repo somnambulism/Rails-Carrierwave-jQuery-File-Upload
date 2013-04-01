@@ -30,7 +30,7 @@ class ImageUploader < CarrierWave::Uploader::Base
   #   "/images/fallback/" + [version_name, "default.png"].compact.join('_')
   # end
 
-  resize_to_limit(1024, 768)
+  resize_to_limit(APP_CONFIG['max_x'], APP_CONFIG['max_y'])
 
   # version :large do
   #   # process :crop
@@ -70,12 +70,12 @@ class ImageUploader < CarrierWave::Uploader::Base
 
   version :preview do
     process :crop
-    resize_to_limit(690, 518)
+    resize_to_limit(APP_CONFIG['max_x'], APP_CONFIG['max_y'])
   end
 
   version :thumb do
     process :crop
-    resize_to_fill(100, 100)
+    resize_to_fill(APP_CONFIG['crop_x'], APP_CONFIG['crop_y'])
   end
 
  

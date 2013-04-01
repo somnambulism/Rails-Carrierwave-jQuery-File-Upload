@@ -53,7 +53,7 @@ $(function () {
 
     completed: function(e, data) {
       console.log(data.result[0].url);
-      $('a[href^="' + data.result[0].url + '"]').slimbox();
+      $('a[href^="' + data.result[0].url + '"]').fancybox();
     },
     downloadTemplate: function (o) {
         var rows = $();
@@ -62,7 +62,7 @@ $(function () {
                 (file.error ? '<div class="name"></div>' +
                     '<div class="size"></div><div class="error" ></div>' :
                       '<div class="thumbnail">' +
-                        '<a href="' + file.url +'" rel="lightbox-pictures" class="picture_' + file.id + '" title="<%= pic.description %>">' +
+                        '<a href="' + file.url +'" class="fancybox-image" rel="group" title="<%= pic.description %>">' +
                           '<img src="" alt="">') +
                         '</a>' +
                         '<div class="caption">' +
@@ -100,4 +100,13 @@ $(function () {
     }
 
   });
+  
+  $("a.fancybox-image").fancybox({
+		'transitionIn'	:	'elastic',
+		'transitionOut'	:	'elastic',
+		'speedIn'		:	600, 
+		'speedOut'		:	200, 
+		'overlayShow'	:	false
+	});
+  
 });

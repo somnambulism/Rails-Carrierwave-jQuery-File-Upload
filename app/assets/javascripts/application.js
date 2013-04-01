@@ -29,7 +29,7 @@
 
 //= require pictures
 
-//= require slimbox2
+//= require jquery.fancybox-1.3.4.js
 
 //= require twitter/bootstrap
 //= require bootstrap-image-gallery.min

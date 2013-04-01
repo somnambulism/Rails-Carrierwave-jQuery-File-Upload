@@ -1,0 +1,14 @@
+defaults: &defaults
+  crop_x: 80
+  crop_y: 80
+  max_x: 800
+  max_y: 600 
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults

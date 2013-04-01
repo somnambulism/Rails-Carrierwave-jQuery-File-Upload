@@ -34,7 +34,7 @@
         <% @pictures.each do |pic| %>
             <li class="span3" id="picture_<%= pic.id %>">
               <div class="thumbnail">
-                <a href="<%= pic.image.url %>" rel="lightbox-pictures" title="<%= pic.description %>">
+                <a href="<%= pic.image.url %>" class="fancybox-image" rel="group" title="<%= pic.description %>">
                   <img src="<%= pic.image.thumb.url %>" alt="">
                 </a>
                 <div class="caption">
