@@ -12,101 +12,95 @@
 /*jslint nomen: true, unparam: true, regexp: true */
 /*global $, window, document */
 
-$(function () {
+GAL = {
+	setup : function() {
+		$('<div id="gallery-pictures"></div>').appendTo($('body'));
+		$('a.gallery-name').click(GAL.getGallery);
+		GAL.fileUpload();
+		GAL.doFancybox();
+	},
 
-    function update(coords)
-    {
-      $('#picture_crop_x').val(coords.x)
-      $('#picture_crop_y').val(coords.y)
-      $('#picture_crop_w').val(coords.w)
-      $('#picture_crop_h').val(coords.h)
-    };
+	getGallery : function() {
+		$.ajax({
+			type : 'GET',
+			url : $(this).attr('href'),
+			timeout : 5000,
+			success : GAL.showGallery,
+			error : function() {
+				alert('Error!');
+			}
+		});
+		return (false);
+	},
 
-    $('#cropbox').Jcrop({
-      boxWidth: 770,
-      boxHeight: 433,
-      onSelect: update,
-      onChange: update
-    });
+	showGallery : function(data) {
+		$('#gallery-pictures').html(data);
+		GAL.fileUpload();
+		GAL.doFancybox();
+		return (false);
+	},
+	
+	doFancybox : function () {
+		$('a.fancybox-image').fancybox({
+			'transitionIn' : 'elastic',
+			'transitionOut' : 'elastic',
+			'speedIn' : 600,
+			'speedOut' : 200,
+			'overlayShow' : false
+		});
+	},
 
+	fileUpload : function() {
+		$('#fileupload').fileupload({
+			autoUpload : true,
+			uploadTemplate : function(o) {
+				var rows = $();
+				$.each(o.files, function(index, file) {
+					console.log(file);
+					var row = $('<li class="span3">' + '<div class="thumbnail">' +
+						'<div class="preview" style="text-align: center;"></div>' +
+						'<div class="progress progress-success progress-striped active">' +
+						'<div class="bar" style="width:0%;"></div>' + '</div>' + '</div>');
+					rows = rows.add(row);
+				});
+				return rows;
+			},
 
-    'use strict';
+			completed : function(e, data) {
+				console.log(data.result[0].url);
+				$('a[href^="' + data.result[0].url + '"]').fancybox();
+			},
+			downloadTemplate : function(o) {
+				var rows = $();
+				$.each(o.files, function(index, file) {
+					var row = $('<li class="span3" id="picture_' + file.picture_id + '">' +
+						(file.error ? '<div class="name"></div>' + '<div class="size"></div><div class="error" ></div>' : '<div class="thumbnail">' +
+						'<a href="' + file.url + '" class="fancybox-image" rel="group" title="<%= pic.description %>">' + '<img src="" alt="">')
+						+ '</a>' + '<div class="caption">' + '<p style="text-align: center;">' +
+						'<a href="" class="btn btn-mini btn-show" style="margin-right: 4px;">' + '<i class="icon-edit "></i>' +
+						'Edit' + '</a>' + '<a class="btn btn-mini btn-delete" confirm="Вы уверены?" data-remote=true data-method="delete" href="" >'
+						+ '<i class="icon-trash"></i>' + 'Delete' + '</a>' + '</p>' + '</div>' + '</div>');
 
-    // Initialize the jQuery File Upload widget:
-    $('#fileupload').fileupload({
-      autoUpload: true,
-      uploadTemplate: function (o) {
-        var rows = $();
-        $.each(o.files, function (index, file) {
-          console.log(file);
-            var row = $('<li class="span3">' +
-                '<div class="thumbnail">' +
-                  '<div class="preview" style="text-align: center;"></div>' +
-                  '<div class="progress progress-success progress-striped active">' +
-                    '<div class="bar" style="width:0%;"></div>' +
-                  '</div>' +
-                '</div>');
-            rows = rows.add(row);
-        });
-        return rows;
-    },
+					if (file.error) {
+						row.find('.name').text(file.name);
+						row.find('.error').text(locale.fileupload.errors[file.error] || file.error);
+					} else {
+						if (file.thumbnail_url) {
+							row.find('img').prop('src', file.thumbnail_url);
+						}
+						row.find('.btn-delete').attr('href', '/galleries/' + $("#galleryID").val() + '/pictures/' + file.picture_id);
+						row.find('.btn-show').attr('href', '/galleries/' + $("#galleryID").val() + '/pictures/' + file.picture_id + '/edit');
+					}
+					rows = rows.add(row);
+				});
+				return rows;
+			}
+		});
+	}
+};
 
-    completed: function(e, data) {
-      console.log(data.result[0].url);
-      $('a[href^="' + data.result[0].url + '"]').fancybox();
-    },
-    downloadTemplate: function (o) {
-        var rows = $();
-        $.each(o.files, function (index, file) {
-            var row = $('<li class="span3" id="picture_' + file.picture_id + '">' +
-                (file.error ? '<div class="name"></div>' +
-                    '<div class="size"></div><div class="error" ></div>' :
-                      '<div class="thumbnail">' +
-                        '<a href="' + file.url +'" class="fancybox-image" rel="group" title="<%= pic.description %>">' +
-                          '<img src="" alt="">') +
-                        '</a>' +
-                        '<div class="caption">' +
-                          '<p style="text-align: center;">' +
-                            '<a href="" class="btn btn-mini btn-show" style="margin-right: 4px;">' +
-                              '<i class="icon-edit "></i>' +
-                              'Edit' +
-                            '</a>' +
-                            '<a class="btn btn-mini btn-delete" confirm="Вы уверены?" data-remote=true data-method="delete" href="" >' +
-                              '<i class="icon-trash"></i>' +
-                              'Delete' +
-                            '</a>' +
-                          '</p>' +
-                        '</div>' +
-                      '</div>');
+$(function() {
 
+	GAL.setup();
 
-            if (file.error) {
-                row.find('.name').text(file.name);
-                row.find('.error').text(
-                    locale.fileupload.errors[file.error] || file.error
-                );
-            } else {
-                if (file.thumbnail_url) {
-                    row.find('img').prop('src', file.thumbnail_url);
-                }
-                row.find('.btn-delete')
-                    .attr('href', '/galleries/' + $("#galleryID").val() + '/pictures/' + file.picture_id);
-                row.find('.btn-show')
-                    .attr('href', '/galleries/' + $("#galleryID").val() + '/pictures/' + file.picture_id + '/edit');
-            }            
-            rows = rows.add(row);
-        });
-        return rows;
-    }
-
-  });
-  
-  $("a.fancybox-image").fancybox({
-		'transitionIn'	:	'elastic',
-		'transitionOut'	:	'elastic',
-		'speedIn'		:	600, 
-		'speedOut'		:	200, 
-		'overlayShow'	:	false
-	});
-  
 });

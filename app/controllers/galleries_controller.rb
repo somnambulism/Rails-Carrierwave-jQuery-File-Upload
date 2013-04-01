@@ -16,10 +16,7 @@ class GalleriesController < ApplicationController
     @gallery = Gallery.find(params[:id])
     @picture = @gallery.pictures.build
     @pictures = Picture.find(:all, :conditions  => [ 'gallery_id = ?', @gallery.id ])
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @gallery }
-    end
+    render(:partial => 'gallery') if request.xhr?
   end
 
   # GET /galleries/new
